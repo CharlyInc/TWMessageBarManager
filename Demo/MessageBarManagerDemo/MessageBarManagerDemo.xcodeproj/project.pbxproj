@@ -28,7 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0E18B62B1D885F9E0090935C /* AlertView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AlertView.xib; sourceTree = "<group>"; };
+		0E18B62B1D885F9E0090935C /* AlertView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AlertView.xib; path = ../../Demo/MessageBarManagerDemo/MessageBarManagerDemo/Resources/AlertView.xib; sourceTree = "<group>"; };
 		561DB434174AFADA006D7D1E /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		561DB435174AFADA006D7D1E /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		561DB436174AFADA006D7D1E /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -69,14 +69,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0E18B62A1D885F820090935C /* views */ = {
-			isa = PBXGroup;
-			children = (
-				0E18B62B1D885F9E0090935C /* AlertView.xib */,
-			);
-			name = views;
-			sourceTree = "<group>";
-		};
 		561DB433174AFADA006D7D1E /* Splash */ = {
 			isa = PBXGroup;
 			children = (
@@ -141,6 +133,7 @@
 		5669FE3B1766C47700B8630B /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				0E18B62B1D885F9E0090935C /* AlertView.xib */,
 				5669FE3C1766C47700B8630B /* icon-error.png */,
 				5669FE3D1766C47700B8630B /* icon-error@2x.png */,
 				5669FE3E1766C47700B8630B /* icon-info.png */,
@@ -182,7 +175,6 @@
 		56DE552917458A7B0026B7D2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				0E18B62A1D885F820090935C /* views */,
 				5669FE3B1766C47700B8630B /* Icons */,
 				561DB433174AFADA006D7D1E /* Splash */,
 			);
