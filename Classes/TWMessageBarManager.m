@@ -67,6 +67,12 @@ static UIColor *kTWDefaultMessageBarStyleSheetInfoStrokeColor = nil;
 
 @property (nonatomic, weak) id <TWMessageViewDelegate> delegate;
 
+@property (nonatomic, strong) IBOutlet UILabel *messageLabel;
+@property (nonatomic, strong) IBOutlet UIImageView *iconView;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *messageLeftConstraint;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *imageCentralCsontraint;
+
+
 // Initializers
 - (id)initWithTitle:(NSString *)title description:(NSString *)description type:(TWMessageBarMessageType)type;
 
@@ -306,9 +312,27 @@ static UIColor *kTWDefaultMessageBarStyleSheetInfoStrokeColor = nil;
             [self.messageBarQueue removeObject:messageView];
             
             [self messageBarViewController].statusBarStyle = messageView.statusBarStyle;
-
+            for(UIView *subview in messageView.subviews){
+                subview.alpha=0;
+            }
+            messageView.messageLeftConstraint.constant=120;
+            messageView.imageCentralCsontraint.constant=-50;
             [UIView animateWithDuration:kTWMessageBarManagerDismissAnimationDuration animations:^{
                 [messageView setFrame:CGRectMake(messageView.frame.origin.x, messageView.frame.origin.y + [messageView height], [messageView width], [messageView height])]; // slide down
+                
+            } completion:^(BOOL finished) {
+                
+                [UIView animateWithDuration:0.35 animations:^{
+                    messageView.iconView.alpha=1;
+                    messageView.imageCentralCsontraint.constant=0;
+                    [messageView layoutIfNeeded];
+                } completion:^(BOOL finished) {
+                    [UIView animateWithDuration:0.35 animations:^{
+                        messageView.messageLabel.alpha = 1;
+                        messageView.messageLeftConstraint.constant = 62;
+                        [messageView layoutIfNeeded];
+                    }];
+                }];
             }];
             [self performSelector:@selector(itemSelected:) withObject:messageView afterDelay:messageView.duration];
             
@@ -469,10 +493,15 @@ static UIColor *kTWDefaultMessageBarStyleSheetInfoStrokeColor = nil;
 
 - (id)initWithTitle:(NSString *)title description:(NSString *)description type:(TWMessageBarMessageType)type
 {
-    self = [super initWithFrame:CGRectZero];
+    NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:@"AlertView" owner:nil options:nil];
+    
+    self = [nibContents lastObject];
+    //self = [super initWithFrame:CGRectZero];
+    
     if (self)
     {
-        self.backgroundColor = [UIColor clearColor];
+        //self.backgroundColor = [UIColor clearColor];
+        self.backgroundColor = [UIColor blackColor];
         self.clipsToBounds = NO;
         self.userInteractionEnabled = YES;
         
@@ -484,6 +513,18 @@ static UIColor *kTWDefaultMessageBarStyleSheetInfoStrokeColor = nil;
         _hit = NO;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didChangeDeviceOrientation:) name:UIDeviceOrientationDidChangeNotification object:nil];
+    }
+    self.messageLabel.text = description;
+    switch(type){
+        case TWMessageBarMessageTypeError:{
+            [self.iconView setImage:[UIImage imageNamed:@"icon-error"]];
+        }break;
+        case TWMessageBarMessageTypeInfo:{
+            [self.iconView setImage:[UIImage imageNamed:@"icon-info"]];
+        }break;
+        case TWMessageBarMessageTypeSuccess:{
+            [self.iconView setImage:[UIImage imageNamed:@"icon-success"]];
+        }break;
     }
     return self;
 }
@@ -499,98 +540,98 @@ static UIColor *kTWDefaultMessageBarStyleSheetInfoStrokeColor = nil;
 
 - (void)drawRect:(CGRect)rect
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    if ([self.delegate respondsToSelector:@selector(styleSheetForMessageView:)])
-    {
-        id<TWMessageBarStyleSheet> styleSheet = [self.delegate styleSheetForMessageView:self];
-        
-        // background fill
-        CGContextSaveGState(context);
-        {
-            if ([styleSheet respondsToSelector:@selector(backgroundColorForMessageType:)])
-            {
-                [[styleSheet backgroundColorForMessageType:self.messageType] set];
-                CGContextFillRect(context, rect);
-            }
-        }
-        CGContextRestoreGState(context);
-        
-        // bottom stroke
-        CGContextSaveGState(context);
-        {
-            if ([styleSheet respondsToSelector:@selector(strokeColorForMessageType:)])
-            {
-                CGContextBeginPath(context);
-                CGContextMoveToPoint(context, 0, rect.size.height);
-                CGContextSetStrokeColorWithColor(context, [styleSheet strokeColorForMessageType:self.messageType].CGColor);
-                CGContextSetLineWidth(context, 1.0);
-                CGContextAddLineToPoint(context, rect.size.width, rect.size.height);
-                CGContextStrokePath(context);
-            }
-        }
-        CGContextRestoreGState(context);
-        
-        CGFloat xOffset = kTWMessageViewBarPadding;
-        CGFloat yOffset = kTWMessageViewBarPadding + [self statusBarOffset];
-        
-        // icon
-        CGContextSaveGState(context);
-        {
-            if ([styleSheet respondsToSelector:@selector(iconImageForMessageType:)])
-            {
-                [[styleSheet iconImageForMessageType:self.messageType] drawInRect:CGRectMake(xOffset, yOffset, kTWMessageViewIconSize, kTWMessageViewIconSize)];
-            }
-        }
-        CGContextRestoreGState(context);
-        
-        yOffset -= kTWMessageViewTextOffset;
-        xOffset += kTWMessageViewIconSize + kTWMessageViewBarPadding;
-        
-        CGSize titleLabelSize = [self titleSize];
-        CGSize descriptionLabelSize = [self descriptionSize];
-        
-        if (self.titleString && !self.descriptionString)
-        {
-            yOffset = ceil(rect.size.height * 0.5) - ceil(titleLabelSize.height * 0.5) - kTWMessageViewTextOffset;
-        }
-        
-        if ([[UIDevice currentDevice] tw_isRunningiOS7OrLater])
-        {
-            NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-            paragraphStyle.alignment = NSTextAlignmentLeft;
-            
-            [[self titleColor] set];
-            [self.titleString drawWithRect:CGRectMake(xOffset, yOffset, titleLabelSize.width, titleLabelSize.height)
-                                   options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine
-                                attributes:@{NSFontAttributeName:[self titleFont], NSForegroundColorAttributeName:[self titleColor], NSParagraphStyleAttributeName:paragraphStyle}
-                                   context:nil];
-            
-            yOffset += titleLabelSize.height;
-            
-            [[self descriptionColor] set];
-            [self.descriptionString drawWithRect:CGRectMake(xOffset, yOffset, descriptionLabelSize.width, descriptionLabelSize.height)
-                                         options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine
-                                      attributes:@{NSFontAttributeName:[self descriptionFont], NSForegroundColorAttributeName:[self descriptionColor], NSParagraphStyleAttributeName:paragraphStyle}
-                                         context:nil];
-        }
-        else
-        {
-            [[self titleColor] set];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            [self.titleString drawInRect:CGRectMake(xOffset, yOffset, titleLabelSize.width, titleLabelSize.height) withFont:[self titleFont] lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentLeft];
-#pragma clang diagnostic pop
-            
-            yOffset += titleLabelSize.height;
-            
-            [[self descriptionColor] set];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            [self.descriptionString drawInRect:CGRectMake(xOffset, yOffset, descriptionLabelSize.width, descriptionLabelSize.height) withFont:[self descriptionFont] lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentLeft];
-#pragma clang diagnostic pop
-        }
-    }
+//    CGContextRef context = UIGraphicsGetCurrentContext();
+//    
+//    if ([self.delegate respondsToSelector:@selector(styleSheetForMessageView:)])
+//    {
+//        id<TWMessageBarStyleSheet> styleSheet = [self.delegate styleSheetForMessageView:self];
+//        
+//        // background fill
+//        CGContextSaveGState(context);
+//        {
+//            if ([styleSheet respondsToSelector:@selector(backgroundColorForMessageType:)])
+//            {
+//                [[styleSheet backgroundColorForMessageType:self.messageType] set];
+//                CGContextFillRect(context, rect);
+//            }
+//        }
+//        CGContextRestoreGState(context);
+//        
+//        // bottom stroke
+//        CGContextSaveGState(context);
+//        {
+//            if ([styleSheet respondsToSelector:@selector(strokeColorForMessageType:)])
+//            {
+//                CGContextBeginPath(context);
+//                CGContextMoveToPoint(context, 0, rect.size.height);
+//                CGContextSetStrokeColorWithColor(context, [styleSheet strokeColorForMessageType:self.messageType].CGColor);
+//                CGContextSetLineWidth(context, 1.0);
+//                CGContextAddLineToPoint(context, rect.size.width, rect.size.height);
+//                CGContextStrokePath(context);
+//            }
+//        }
+//        CGContextRestoreGState(context);
+//        
+//        CGFloat xOffset = kTWMessageViewBarPadding;
+//        CGFloat yOffset = kTWMessageViewBarPadding + [self statusBarOffset];
+//        
+//        // icon
+//        CGContextSaveGState(context);
+//        {
+//            if ([styleSheet respondsToSelector:@selector(iconImageForMessageType:)])
+//            {
+//                [[styleSheet iconImageForMessageType:self.messageType] drawInRect:CGRectMake(xOffset, yOffset, kTWMessageViewIconSize, kTWMessageViewIconSize)];
+//            }
+//        }
+//        CGContextRestoreGState(context);
+//        
+//        yOffset -= kTWMessageViewTextOffset;
+//        xOffset += kTWMessageViewIconSize + kTWMessageViewBarPadding;
+//        
+//        CGSize titleLabelSize = [self titleSize];
+//        CGSize descriptionLabelSize = [self descriptionSize];
+//        
+//        if (self.titleString && !self.descriptionString)
+//        {
+//            yOffset = ceil(rect.size.height * 0.5) - ceil(titleLabelSize.height * 0.5) - kTWMessageViewTextOffset;
+//        }
+//        
+//        if ([[UIDevice currentDevice] tw_isRunningiOS7OrLater])
+//        {
+//            NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+//            paragraphStyle.alignment = NSTextAlignmentLeft;
+//            
+//            [[self titleColor] set];
+//            [self.titleString drawWithRect:CGRectMake(xOffset, yOffset, titleLabelSize.width, titleLabelSize.height)
+//                                   options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine
+//                                attributes:@{NSFontAttributeName:[self titleFont], NSForegroundColorAttributeName:[self titleColor], NSParagraphStyleAttributeName:paragraphStyle}
+//                                   context:nil];
+//            
+//            yOffset += titleLabelSize.height;
+//            
+//            [[self descriptionColor] set];
+//            [self.descriptionString drawWithRect:CGRectMake(xOffset, yOffset, descriptionLabelSize.width, descriptionLabelSize.height)
+//                                         options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine
+//                                      attributes:@{NSFontAttributeName:[self descriptionFont], NSForegroundColorAttributeName:[self descriptionColor], NSParagraphStyleAttributeName:paragraphStyle}
+//                                         context:nil];
+//        }
+//        else
+//        {
+//            [[self titleColor] set];
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+//            [self.titleString drawInRect:CGRectMake(xOffset, yOffset, titleLabelSize.width, titleLabelSize.height) withFont:[self titleFont] lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentLeft];
+//#pragma clang diagnostic pop
+//            
+//            yOffset += titleLabelSize.height;
+//            
+//            [[self descriptionColor] set];
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+//            [self.descriptionString drawInRect:CGRectMake(xOffset, yOffset, descriptionLabelSize.width, descriptionLabelSize.height) withFont:[self descriptionFont] lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentLeft];
+//#pragma clang diagnostic pop
+//        }
+//    }
 }
 
 #pragma mark - Getters

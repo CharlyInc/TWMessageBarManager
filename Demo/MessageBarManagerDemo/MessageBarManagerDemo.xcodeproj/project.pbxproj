@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E18B62C1D885F9E0090935C /* AlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0E18B62B1D885F9E0090935C /* AlertView.xib */; };
 		561DB437174AFADA006D7D1E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 561DB434174AFADA006D7D1E /* Default-568h@2x.png */; };
 		561DB438174AFADA006D7D1E /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 561DB435174AFADA006D7D1E /* Default.png */; };
 		561DB439174AFADA006D7D1E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 561DB436174AFADA006D7D1E /* Default@2x.png */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E18B62B1D885F9E0090935C /* AlertView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AlertView.xib; sourceTree = "<group>"; };
 		561DB434174AFADA006D7D1E /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		561DB435174AFADA006D7D1E /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		561DB436174AFADA006D7D1E /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -67,6 +69,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E18B62A1D885F820090935C /* views */ = {
+			isa = PBXGroup;
+			children = (
+				0E18B62B1D885F9E0090935C /* AlertView.xib */,
+			);
+			name = views;
+			sourceTree = "<group>";
+		};
 		561DB433174AFADA006D7D1E /* Splash */ = {
 			isa = PBXGroup;
 			children = (
@@ -172,6 +182,7 @@
 		56DE552917458A7B0026B7D2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0E18B62A1D885F820090935C /* views */,
 				5669FE3B1766C47700B8630B /* Icons */,
 				561DB433174AFADA006D7D1E /* Splash */,
 			);
@@ -247,6 +258,7 @@
 				5669FE451766C47700B8630B /* icon-info@2x.png in Resources */,
 				5669FE461766C47700B8630B /* icon-success.png in Resources */,
 				5669FE471766C47700B8630B /* icon-success@2x.png in Resources */,
+				0E18B62C1D885F9E0090935C /* AlertView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,7 +13,7 @@
 #define kStringMessageBarErrorTitle localize(@"message.bar.error.title", @"Error Title")
 #define kStringMessageBarErrorMessage localize(@"message.bar.error.message", @"This is an error message!")
 #define kStringMessageBarSuccessTitle localize(@"message.bar.success.title", @"Success Title")
-#define kStringMessageBarSuccessMessage localize(@"message.bar.success.message", @"This is a success message!")
+#define kStringMessageBarSuccessMessage localize(@"message.bar.success.message", @"This is a success message that is very long and will probably go over two lines, hopefully maybe even three, if it's long enough lorem ipsum dolor sit!")
 #define kStringMessageBarInfoTitle localize(@"message.bar.info.title", @"Information Title")
 #define kStringMessageBarInfoMessage localize(@"message.bar.info.message", @"This is an info message!")
 
