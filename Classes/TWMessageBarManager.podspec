@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.author       = { "Terry Worona" => "terryworona@gmail.com" }
   s.source       = { 
-	:git => "https://github.com/terryworona/TWMessageBarManager.git",
+	:git => "https://github.com/CharlyInc/TWMessageBarManager.git",
 	:tag => "v1.8.1"
   }
 
