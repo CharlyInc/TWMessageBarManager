@@ -501,7 +501,7 @@ static UIColor *kTWDefaultMessageBarStyleSheetInfoStrokeColor = nil;
     if (self)
     {
         //self.backgroundColor = [UIColor clearColor];
-        self.backgroundColor = [UIColor blackColor];
+        self.backgroundColor = [UIColor colorWithRed:70.0f/255 green:70.0f/255 blue:70.0f/255 alpha:1.0];
         self.clipsToBounds = NO;
         self.userInteractionEnabled = YES;
         
